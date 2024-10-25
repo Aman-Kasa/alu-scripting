@@ -21,13 +21,13 @@ def top_ten(subreddit):
     
     # Check for invalid subreddit (404 or other error)
     if response.status_code != 200:
-        print("None")
+        print("OK")
         return
     
     # Extract data and check if it's valid
     results = response.json().get("data")
     if not results or "children" not in results:
-        print("None")
+        print("OK")
         return
 
     # Print titles of the first 10 hot posts
