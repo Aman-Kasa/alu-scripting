@@ -1,22 +1,37 @@
 #!/usr/bin/python3
-"""Print the titles of the first 10Hot Posts"""
+"""Prints the title of the first 10 hot posts listed for a given subreddit"""
 import requests
 
 
 def top_ten(subreddit):
-    """The top ten titles"""
-    headers = {'User-Agent': 'MyAPI/0.0.1'}
-    url = "https://reddit.com/r/{}.json".format(subreddit)
-    response = requests.get(url, headers=headers)
+    """Print the titles of the hottest posts on a given subreddit"""
+    url = "https://www.reddit.com/r/{}/hot/.json".format(subreddit)
+    headers = {
+        "User-Agent": "PostmanRuntime/7.35.0"
+    }
+    params = {
+        "limit": 10
+    }
+    
+    response = requests.get(
+        url,
+        headers=headers,
+        params=params,
+        allow_redirects=False
+    )
+    
+    # Check for invalid subreddit (404 or other error)
+    if response.status_code != 200:
+        print("None")
+        return
+    
+    # Extract data and check if it's valid
+    results = response.json().get("data")
+    if not results or "children" not in results:
+        print("None")
+        return
 
-    if response.status_code == 200:
-        json_data = response.json()
-        for i in range(10):
-            print(
-                    json_data.get('data')
-                    .get('children')[i]
-                    .get('data')
-                    .get('title')
-                )
-    else:
-        print(None)
+    # Print titles of the first 10 hot posts
+    for post in results.get("children", []):
+        title = post.get("data", {}).get("title", "None")
+        print(title)
